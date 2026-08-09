@@ -60,7 +60,7 @@ export function GlobalFonts() {
       .wheel-col { flex: 0 0 380px; max-width: 380px; }
       .list-col { flex: 1; min-width: 0; }
 
-      .stat-row { display: flex; gap: 14px; margin-bottom: 24px; }
+      .stat-row { display: flex; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
 
       /* ---- Listes défilantes (hauteur limitée + barre de défilement) ---- */
       .scroll-list { max-height: 300px; overflow-y: auto; padding-right: 4px; }
@@ -79,17 +79,6 @@ export function GlobalFonts() {
       }
 
       @media (max-width: 760px) {
-        .app-shell { flex-direction: column; }
-        .app-sidebar {
-          width: 100%; height: auto; position: relative; padding: 12px 14px !important;
-        }
-        .app-sidebar-header { padding-bottom: 10px !important; }
-        .app-nav-list { flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
-        .app-nav-list button { white-space: nowrap; flex-shrink: 0; }
-        .app-sidebar-footer { flex-direction: row !important; margin-top: 10px !important; gap: 8px !important; }
-        .app-sidebar-footer button { flex: 1; justify-content: center !important; }
-        .app-main { padding: 18px 16px; }
-
         .two-col { flex-direction: column; }
         .wheel-col { flex: 1 1 auto; max-width: 100%; width: 100%; }
 
