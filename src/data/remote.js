@@ -125,7 +125,7 @@ export async function remoteFetchReceipts() {
 }
 
 export async function remoteFetchPaymentsForTurn(turn) {
-  const { data, error } = await supabase.from("payments").select("member_id, turn, amount").eq("turn", turn);
+  const { data, error } = await supabase.from("payments").select("member_id, turn, amount, commission").eq("turn", turn);
   if (error) throw error;
   return data;
 }
