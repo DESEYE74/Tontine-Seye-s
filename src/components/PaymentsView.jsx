@@ -92,7 +92,7 @@ export default function PaymentsView() {
   return (
     <Screen title="Versements" subtitle="Enregistrez un versement reçu, et ajustez les montants de référence.">
       {/* Montant de la cotisation + commission */}
-      <div style={{ background: "#fff", border: `1px solid ${T.line}`, borderRadius: 14, padding: "12px 16px", marginBottom: 10 }}>
+      <div style={{ background: "#fff", border: `1px solid ${T.line}`, borderRadius: 14, padding: "10px 14px", marginBottom: 8 }}>
         <h3 className="f-body" style={{ fontSize: 13, fontWeight: 700, margin: "0 0 8px", display: "flex", alignItems: "center", gap: 7 }}>
           <Wallet size={14} color={T.textSoft} /> Cotisation et commission du trésorier
         </h3>
@@ -131,7 +131,7 @@ export default function PaymentsView() {
       </div>
 
       {/* Enregistrer un versement */}
-      <div style={{ background: "#fff", border: `1px solid ${T.line}`, borderRadius: 14, padding: "12px 16px", marginBottom: 10 }}>
+      <div style={{ background: "#fff", border: `1px solid ${T.line}`, borderRadius: 14, padding: "10px 14px", marginBottom: 8 }}>
         <h3 className="f-body" style={{ fontSize: 13, fontWeight: 700, margin: "0 0 8px", display: "flex", alignItems: "center", gap: 7 }}>
           <Plus size={14} color={T.textSoft} /> Enregistrer un versement — tour {currentTurn}
         </h3>
@@ -177,9 +177,9 @@ export default function PaymentsView() {
       </div>
 
       {/* État des cotisations pour ce tour */}
-      <div style={{ background: T.card, border: `1px solid ${T.line}`, borderRadius: 14, padding: "8px 16px", marginBottom: 10 }}>
+      <div style={{ background: T.card, border: `1px solid ${T.line}`, borderRadius: 14, padding: "6px 14px", marginBottom: 8 }}>
         <h3 className="f-body" style={{ fontSize: 13, fontWeight: 700, margin: "8px 0" }}>État des cotisations — tour {currentTurn}</h3>
-        <div className="scroll-list" style={{ maxHeight: 170 }}>
+        <div className="scroll-list" style={{ maxHeight: 130 }}>
           {members.map((m) => (
             <div key={m.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${T.line}` }}>
               <span style={{ fontSize: 13 }}>{m.name}</span>
@@ -190,7 +190,7 @@ export default function PaymentsView() {
       </div>
 
       {/* Commissions du trésorier, cumulées par membre */}
-      <div style={{ background: T.card, border: `1px solid ${T.line}`, borderRadius: 14, padding: "8px 16px", marginBottom: 10 }}>
+      <div style={{ background: T.card, border: `1px solid ${T.line}`, borderRadius: 14, padding: "6px 14px", marginBottom: 8 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0" }}>
           <h3 className="f-body" style={{ fontSize: 13, fontWeight: 700, margin: 0, display: "flex", alignItems: "center", gap: 6 }}>
             <HandCoins size={14} color={T.textSoft} /> Commissions du trésorier — total par membre
@@ -199,7 +199,7 @@ export default function PaymentsView() {
             {totalCommission.toLocaleString("fr-FR")} {tontine.currency}
           </span>
         </div>
-        <div className="scroll-list" style={{ maxHeight: 170 }}>
+        <div className="scroll-list" style={{ maxHeight: 130 }}>
           {commissions.length === 0 || totalCommission === 0 ? (
             <p style={{ color: T.textSoft, fontSize: 13, padding: "10px 0" }}>Aucune commission enregistrée pour le moment.</p>
           ) : commissions.filter((c) => c.total > 0).map((c) => (
@@ -211,9 +211,9 @@ export default function PaymentsView() {
         </div>
       </div>
 
-      <div style={{ background: T.card, border: `1px solid ${T.line}`, borderRadius: 14, padding: "8px 16px" }}>
+      <div style={{ background: T.card, border: `1px solid ${T.line}`, borderRadius: 14, padding: "6px 14px" }}>
         <h3 className="f-body" style={{ fontSize: 13, fontWeight: 700, margin: "8px 0" }}>Historique des versements</h3>
-        <div className="scroll-list" style={{ maxHeight: 170 }}>
+        <div className="scroll-list" style={{ maxHeight: 130 }}>
           {receipts.length === 0 ? (
             <p style={{ color: T.textSoft, fontSize: 13, padding: "10px 0" }}>Aucun versement enregistré pour le moment.</p>
           ) : receipts.map((r) => (

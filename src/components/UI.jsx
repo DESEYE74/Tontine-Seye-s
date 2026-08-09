@@ -101,7 +101,7 @@ export function Pill({ status, variant = "rotation" }) {
 
 export function StatCard({ label, value, sub, icon: Icon }) {
   return (
-    <div style={{ background: T.card, border: `1px solid ${T.line}`, borderRadius: 14, padding: "18px 20px", flex: 1 }}>
+    <div style={{ background: T.card, border: `1px solid ${T.line}`, borderRadius: 14, padding: "18px 20px", flex: "1 1 160px", minWidth: 160 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <p className="f-body" style={{ fontSize: 13, color: T.textSoft, margin: 0 }}>{label}</p>
         {Icon && <Icon size={16} color={T.textSoft} />}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Wallet, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Wallet, AlertTriangle, ShieldCheck, HandCoins } from "lucide-react";
 import { T } from "../theme.jsx";
 import { RotationWheel, Pill, StatCard, Screen } from "./UI.jsx";
 import { fetchMembers, fetchTontineSettings, fetchPaymentsForTurn } from "../data/api.js";
@@ -37,6 +37,7 @@ export default function AdminDashboard() {
   const lateCount = members.length - paidCount;
   const beneficiary = members.find((m) => m.turn === currentTurn);
   const totalCollected = payments.reduce((sum, p) => sum + Number(p.amount), 0);
+  const totalCommission = payments.reduce((sum, p) => sum + Number(p.commission || 0), 0);
 
   return (
     <Screen
@@ -47,6 +48,7 @@ export default function AdminDashboard() {
         <StatCard label="Collecté ce tour" value={`${totalCollected.toLocaleString("fr-FR")} F`} sub={`${paidCount} / ${members.length} membres`} icon={Wallet} />
         <StatCard label="En retard" value={lateCount} sub="N'ont pas encore versé ce tour" icon={AlertTriangle} />
         <StatCard label="Bénéficiaire du tour" value={beneficiary?.name ?? "—"} sub={`Reçoit ${(tontine.amount * members.length).toLocaleString("fr-FR")} F`} icon={ShieldCheck} />
+        <StatCard label="Commission encaissée" value={`${totalCommission.toLocaleString("fr-FR")} F`} sub="Trésorier — ce tour-ci" icon={HandCoins} />
       </div>
 
       <div className="two-col">
