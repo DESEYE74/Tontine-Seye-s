@@ -2,6 +2,7 @@ export const TONTINE = {
   name: "Tontine",
   motto: "La solidarité d'aujourd'hui, la sécurité de demain",
   amount: 25000,
+  commission: 500,
   currency: "FCFA",
   frequency: "Mensuelle",
   currentTurn: 7,

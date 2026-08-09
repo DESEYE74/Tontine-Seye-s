@@ -4,7 +4,7 @@ import { nextTurn } from "../lib/rotation.js";
 import {
   remoteFetchTontineSettings, remoteUpdateTontineSettings,
   remoteFetchMembers, remoteFetchMembersAdmin, remoteAddMember, remoteUpdateMember, remoteDeleteMember, remoteAssignPriorityTurn,
-  remoteFetchReceipts, remoteFetchPaymentsForTurn, remoteRecordPayment,
+  remoteFetchReceipts, remoteFetchPaymentsForTurn, remoteRecordPayment, remoteFetchCommissionsSummary,
 } from "./remote.js";
 
 // Couche d'accès aux données : en mode démo (Supabase non configuré), tout
@@ -134,9 +134,19 @@ export async function fetchPaymentsForTurn(turn) {
   return remoteFetchPaymentsForTurn(turn);
 }
 
-export async function recordPayment({ memberId, turn, cycle, amount }) {
+export async function recordPayment({ memberId, turn, cycle, amount, commission }) {
   if (isDemoMode) {
-    return { id: `demo-${Date.now()}`, memberId, turn, cycle, amount, paid_at: new Date().toISOString() };
+    return { id: `demo-${Date.now()}`, memberId, turn, cycle, amount, commission, paid_at: new Date().toISOString() };
   }
-  return remoteRecordPayment({ memberId, turn, cycle, amount });
+  return remoteRecordPayment({ memberId, turn, cycle, amount, commission });
+}
+
+// Total des commissions du trésorier, cumulé par membre.
+export async function fetchCommissionsSummary() {
+  if (isDemoMode) {
+    return MEMBERS.filter((m) => m.status === "paid" || m.status === "current")
+      .map((m) => ({ memberId: m.id, member: m.name, total: TONTINE.commission || 0 }))
+      .sort((a, b) => b.total - a.total);
+  }
+  return remoteFetchCommissionsSummary();
 }

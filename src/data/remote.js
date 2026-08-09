@@ -10,6 +10,7 @@ export async function remoteFetchTontineSettings() {
     name: data.name,
     motto: data.motto,
     amount: data.amount,
+    commission: data.commission ?? 0,
     currency: data.currency,
     frequency: data.frequency,
     currentTurn: data.current_turn,
@@ -23,6 +24,7 @@ export async function remoteUpdateTontineSettings(fields) {
   if (fields.name !== undefined) dbFields.name = fields.name;
   if (fields.motto !== undefined) dbFields.motto = fields.motto;
   if (fields.amount !== undefined) dbFields.amount = fields.amount;
+  if (fields.commission !== undefined) dbFields.commission = fields.commission;
   if (fields.currency !== undefined) dbFields.currency = fields.currency;
   if (fields.frequency !== undefined) dbFields.frequency = fields.frequency;
   if (fields.currentTurn !== undefined) dbFields.current_turn = fields.currentTurn;
@@ -128,8 +130,27 @@ export async function remoteFetchPaymentsForTurn(turn) {
   return data;
 }
 
-export async function remoteRecordPayment({ memberId, turn, cycle, amount }) {
-  const { data, error } = await supabase.from("payments").insert({ member_id: memberId, turn, cycle: cycle ?? 1, amount }).select().single();
+export async function remoteRecordPayment({ memberId, turn, cycle, amount, commission }) {
+  const { data, error } = await supabase
+    .from("payments")
+    .insert({ member_id: memberId, turn, cycle: cycle ?? 1, amount, commission: commission ?? 0 })
+    .select()
+    .single();
   if (error) throw error;
   return data;
+}
+
+// Total des commissions versées par chaque membre, cumulé sur tous les tours
+// et tous les cycles — pour le suivi de ce que le trésorier a perçu.
+export async function remoteFetchCommissionsSummary() {
+  const { data, error } = await supabase.from("payments").select("member_id, commission, members(name)");
+  if (error) throw error;
+  const totals = new Map();
+  for (const p of data) {
+    const key = p.member_id;
+    const prev = totals.get(key) || { memberId: key, member: p.members?.name ?? "—", total: 0 };
+    prev.total += Number(p.commission || 0);
+    totals.set(key, prev);
+  }
+  return Array.from(totals.values()).sort((a, b) => b.total - a.total);
 }
