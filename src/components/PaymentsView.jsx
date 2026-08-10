@@ -52,6 +52,7 @@ export default function PaymentsView() {
 
   const currentTurn = tontine.currentTurn ?? 1;
   const totalCommission = commissions.reduce((sum, c) => sum + c.total, 0);
+  const unpaidMembers = members.filter((m) => paymentStatus(m.id, currentTurn, payments) === "late");
 
   const saveAmount = async () => {
     const value = Number(amountDraft);
@@ -69,6 +70,13 @@ export default function PaymentsView() {
 
   const submit = async () => {
     if (!selectedMember || !amount) return;
+    // Sécurité : on revérifie juste avant l'envoi que ce membre n'a pas déjà
+    // versé pour ce tour (évite une double saisie par erreur).
+    const alreadyPaid = paymentStatus(selectedMember, currentTurn, payments) === "paid";
+    if (alreadyPaid) {
+      setError("Ce membre a déjà versé sa cotisation et sa commission pour ce tour — double saisie bloquée.");
+      return;
+    }
     setSaving(true);
     setError("");
     try {
@@ -135,44 +143,53 @@ export default function PaymentsView() {
         <h3 className="f-body" style={{ fontSize: 13, fontWeight: 700, margin: "0 0 8px", display: "flex", alignItems: "center", gap: 7 }}>
           <Plus size={14} color={T.textSoft} /> Enregistrer un versement — tour {currentTurn}
         </h3>
-        <div style={{ display: "flex", gap: 10, alignItems: "flex-end", flexWrap: "wrap" }}>
-          <div style={{ flex: 2, minWidth: 180 }}>
-            <label style={{ fontSize: 11.5, color: T.textSoft }}>Membre</label>
-            <select value={selectedMember} onChange={(e) => setSelectedMember(e.target.value)} style={{
-              width: "100%", marginTop: 3, padding: "7px 9px", borderRadius: 8, border: `1px solid ${T.line}`, fontSize: 13,
-            }}>
-              <option value="">Choisir un membre…</option>
-              {members.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
-            </select>
-          </div>
-          <div style={{ flex: 1, minWidth: 110 }}>
-            <label style={{ fontSize: 11.5, color: T.textSoft }}>Cotisation</label>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="f-mono"
-              style={{ width: "100%", marginTop: 3, padding: "7px 9px", borderRadius: 8, border: `1px solid ${T.line}`, fontSize: 13, boxSizing: "border-box" }}
-            />
-          </div>
-          <div style={{ flex: 1, minWidth: 110 }}>
-            <label style={{ fontSize: 11.5, color: T.textSoft }}>Commission</label>
-            <input
-              type="number"
-              value={commission}
-              onChange={(e) => setCommission(e.target.value)}
-              className="f-mono"
-              style={{ width: "100%", marginTop: 3, padding: "7px 9px", borderRadius: 8, border: `1px solid ${T.line}`, fontSize: 13, boxSizing: "border-box" }}
-            />
-          </div>
-          <button onClick={submit} disabled={!selectedMember || !amount || saving} style={{
-            background: T.gold, border: "none", borderRadius: 8, padding: "8px 16px", fontWeight: 700,
-            fontSize: 12.5, color: "#2A2205", cursor: "pointer", opacity: !selectedMember || !amount || saving ? 0.6 : 1,
+        {unpaidMembers.length === 0 ? (
+          <p style={{ fontSize: 12.5, color: T.green, margin: 0 }}>
+            ✓ Tous les membres ont déjà versé leur cotisation et leur commission pour ce tour.
+          </p>
+        ) : (
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-end", flexWrap: "wrap" }}>
+            <div style={{ flex: 2, minWidth: 180 }}>
+              <label style={{ fontSize: 11.5, color: T.textSoft }}>Membre</label>
+              <select value={selectedMember} onChange={(e) => setSelectedMember(e.target.value)} style={{
+                width: "100%", marginTop: 3, padding: "7px 9px", borderRadius: 8, border: `1px solid ${T.line}`, fontSize: 13,
+              }}>
+                <option value="">Choisir un membre…</option>
+                {unpaidMembers.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+              </select>
+              <p style={{ fontSize: 10.5, color: T.textSoft, margin: "3px 0 0" }}>
+                Seuls les membres n'ayant pas encore versé ce tour sont proposés.
+              </p>
+            </div>
+            <div style={{ flex: 1, minWidth: 110 }}>
+              <label style={{ fontSize: 11.5, color: T.textSoft }}>Cotisation</label>
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="f-mono"
+                style={{ width: "100%", marginTop: 3, padding: "7px 9px", borderRadius: 8, border: `1px solid ${T.line}`, fontSize: 13, boxSizing: "border-box" }}
+              />
+            </div>
+            <div style={{ flex: 1, minWidth: 110 }}>
+              <label style={{ fontSize: 11.5, color: T.textSoft }}>Commission</label>
+              <input
+                type="number"
+                value={commission}
+                onChange={(e) => setCommission(e.target.value)}
+                className="f-mono"
+                style={{ width: "100%", marginTop: 3, padding: "7px 9px", borderRadius: 8, border: `1px solid ${T.line}`, fontSize: 13, boxSizing: "border-box" }}
+              />
+            </div>
+            <button onClick={submit} disabled={!selectedMember || !amount || saving} style={{
+              background: T.gold, border: "none", borderRadius: 8, padding: "8px 16px", fontWeight: 700,
+              fontSize: 12.5, color: "#2A2205", cursor: "pointer", opacity: !selectedMember || !amount || saving ? 0.6 : 1,
             display: "flex", alignItems: "center", gap: 6,
           }}>
             <Plus size={14} /> {saving ? "Enregistrement…" : "Enregistrer"}
-          </button>
-        </div>
+            </button>
+          </div>
+        )}
         {error && <p style={{ color: T.rust, fontSize: 12, marginTop: 8 }}>{error}</p>}
       </div>
 
