@@ -9,6 +9,7 @@ import MembersView from "./components/MembersView.jsx";
 import CalendarView from "./components/CalendarView.jsx";
 import ReceiptsView from "./components/ReceiptsView.jsx";
 import ChatDrawer from "./components/ChatDrawer.jsx";
+import HelpDrawer from "./components/HelpDrawer.jsx";
 
 export default function App() {
   const [screen, setScreen] = useState("login"); // login | app
@@ -16,6 +17,7 @@ export default function App() {
   const [me, setMe] = useState(null);
   const [nav, setNav] = useState("dashboard");
   const [chatOpen, setChatOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const enter = (mode, user) => {
     setRole(mode);
@@ -27,6 +29,7 @@ export default function App() {
   const logout = () => {
     setScreen("login");
     setChatOpen(false);
+    setHelpOpen(false);
     setMe(null);
   };
 
@@ -47,10 +50,11 @@ export default function App() {
       {screen === "login" && <Login onEnter={enter} />}
       {screen === "app" && (
         <>
-          <Shell role={role} active={nav} onNav={setNav} onLogout={logout} onChat={() => setChatOpen(true)}>
+          <Shell role={role} active={nav} onNav={setNav} onLogout={logout} onChat={() => setChatOpen(true)} onHelp={() => setHelpOpen(true)}>
             {renderScreen()}
           </Shell>
           <ChatDrawer open={chatOpen} onClose={() => setChatOpen(false)} role={role} me={me} />
+          <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} role={role} />
         </>
       )}
     </>
