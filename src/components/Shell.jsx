@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Wallet, Users, CalendarDays, Receipt, LogOut, Sparkles, CreditCard, Menu, X } from "lucide-react";
+import { Wallet, Users, CalendarDays, Receipt, LogOut, Sparkles, CreditCard, Menu, X, HelpCircle } from "lucide-react";
 import { T, BRAND_NAME } from "../theme.jsx";
 import { TONTINE } from "../data/mock.js";
 import { fetchTontineSettings } from "../data/api.js";
@@ -15,7 +15,7 @@ function useIsMobile() {
   return isMobile;
 }
 
-export default function Shell({ role, active, onNav, onLogout, onChat, children }) {
+export default function Shell({ role, active, onNav, onLogout, onChat, onHelp, children }) {
   const [name, setName] = useState(TONTINE.name);
   const isMobile = useIsMobile();
   const [navOpen, setNavOpen] = useState(!isMobile);
@@ -72,13 +72,22 @@ export default function Shell({ role, active, onNav, onLogout, onChat, children 
 
   const FooterButtons = () => (
     <div className="app-sidebar-footer" style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
-      <button onClick={() => { onChat(); if (isMobile) setNavOpen(false); }} style={{
-        display: "flex", alignItems: "center", gap: 8, padding: "9px 10px", borderRadius: 9,
-        border: `1px solid ${T.inkLine}`, cursor: "pointer", background: "transparent",
-        color: T.gold, fontSize: 13.5, fontWeight: 600,
-      }}>
-        <Sparkles size={15} /> Assistant
-      </button>
+      <div style={{ display: "flex", gap: 8 }}>
+        <button onClick={() => { onChat(); if (isMobile) setNavOpen(false); }} style={{
+          flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "9px 8px", borderRadius: 9,
+          border: `1px solid ${T.inkLine}`, cursor: "pointer", background: "transparent",
+          color: T.gold, fontSize: 13, fontWeight: 600,
+        }}>
+          <Sparkles size={15} /> Assistant
+        </button>
+        <button onClick={() => { onHelp(); if (isMobile) setNavOpen(false); }} style={{
+          flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "9px 8px", borderRadius: 9,
+          border: `1px solid ${T.inkLine}`, cursor: "pointer", background: "transparent",
+          color: "#9AA1C4", fontSize: 13, fontWeight: 600,
+        }}>
+          <HelpCircle size={15} /> Aide
+        </button>
+      </div>
       <button onClick={onLogout} style={{
         display: "flex", alignItems: "center", gap: 8, padding: "9px 10px", borderRadius: 9,
         border: "none", cursor: "pointer", background: "transparent", color: "#8B93B8", fontSize: 13,
