@@ -111,6 +111,9 @@ export async function downloadReceiptPdf(receipt, context) {
 // Sur ordinateur, si le partage de fichier n'est pas supporté, on télécharge à la place.
 export async function shareReceiptPdf(receipt, context) {
   const { blob, fileName } = await buildReceiptPdf(receipt, context);
+  if (!blob || blob.size < 500) {
+    throw new Error("Le PDF généré semble invalide — réessayez après avoir rechargé la page.");
+  }
   const file = new File([blob], fileName, { type: "application/pdf" });
   const name = context?.name ?? TONTINE.name;
 
@@ -160,6 +163,9 @@ export async function downloadPayoutReceiptPdf(payout, context) {
 
 export async function sharePayoutReceiptPdf(payout, context) {
   const { blob, fileName } = await buildPayoutReceiptPdf(payout, context);
+  if (!blob || blob.size < 500) {
+    throw new Error("Le PDF généré semble invalide — réessayez après avoir rechargé la page.");
+  }
   const file = new File([blob], fileName, { type: "application/pdf" });
   const name = context?.name ?? TONTINE.name;
 
