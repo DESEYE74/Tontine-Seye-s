@@ -71,6 +71,7 @@ export default function ReceiptsView({ role, me }) {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [shareError, setShareError] = useState("");
   const [context, setContext] = useState({ name: "Tontine", currency: "FCFA", totalTurns: 12 });
   const [payout, setPayout] = useState(null); // infos du bénéficiaire du tour en cours
 
@@ -100,6 +101,20 @@ export default function ReceiptsView({ role, me }) {
 
   if (loading) return <p style={{ color: T.textSoft, fontSize: 13.5 }}>Chargement…</p>;
 
+  const runAction = async (fn) => {
+    setBusy(true);
+    setShareError("");
+    try {
+      await fn();
+    } catch (e) {
+      if (e?.name !== "AbortError") {
+        setShareError(e.message || "Le partage a échoué. Rechargez la page (Ctrl+F5) et réessayez, ou utilisez « Télécharger ».");
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const iAmBeneficiary = role === "member" && payout && me?.name === payout.memberName;
   const canSeePayout = role === "admin" || iAmBeneficiary;
 
@@ -111,7 +126,7 @@ export default function ReceiptsView({ role, me }) {
             { key: "payment", label: "Reçus de versement" },
             { key: "payout", label: "Reçu de remise" },
           ].map((t) => (
-            <button key={t.key} onClick={() => setDocType(t.key)} style={{
+            <button key={t.key} onClick={() => { setDocType(t.key); setShareError(""); }} style={{
               flex: 1, padding: "8px 0", borderRadius: 9, border: "none", cursor: "pointer",
               background: docType === t.key ? T.ink : "transparent",
               color: docType === t.key ? "#fff" : T.textSoft, fontWeight: 600, fontSize: 12.5,
@@ -130,7 +145,7 @@ export default function ReceiptsView({ role, me }) {
               <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
                 <button
                   disabled={busy}
-                  onClick={async () => { setBusy(true); await sharePayoutReceiptPdf(payout, context); setBusy(false); }}
+                  onClick={() => runAction(() => sharePayoutReceiptPdf(payout, context))}
                   style={{
                     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
                     background: "#25D366", border: "none", borderRadius: 10, padding: "11px 0",
@@ -141,12 +156,13 @@ export default function ReceiptsView({ role, me }) {
                 </button>
                 <button
                   disabled={busy}
-                  onClick={async () => { setBusy(true); await downloadPayoutReceiptPdf(payout, context); setBusy(false); }}
+                  onClick={() => runAction(() => downloadPayoutReceiptPdf(payout, context))}
                   style={{ width: 44, display: "flex", alignItems: "center", justifyContent: "center", background: T.ink, border: "none", borderRadius: 10, cursor: "pointer" }}
                 >
                   <Download size={16} color={T.gold} />
                 </button>
               </div>
+              {shareError && <p style={{ color: T.rust, fontSize: 11.5, marginTop: 8, textAlign: "center" }}>{shareError}</p>}
               <p style={{ fontSize: 11, color: T.textSoft, marginTop: 8, textAlign: "center" }}>
                 Document attestant la remise de la caisse complète au bénéficiaire de ce tour.
               </p>
@@ -166,7 +182,7 @@ export default function ReceiptsView({ role, me }) {
           <div className="list-col" style={{ background: T.card, border: `1px solid ${T.line}`, borderRadius: 16, padding: "14px 16px" }}>
             <div className="scroll-list">
               {receipts.map((r) => (
-                <button key={r.id} onClick={() => setSelected(r)} style={{
+                <button key={r.id} onClick={() => { setSelected(r); setShareError(""); }} style={{
                   width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
                   padding: "12px 8px", borderRadius: 10, border: "none", cursor: "pointer", textAlign: "left",
                   background: selected?.id === r.id ? T.stone : "transparent", marginBottom: 2,
@@ -190,7 +206,7 @@ export default function ReceiptsView({ role, me }) {
               <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
                 <button
                   disabled={busy}
-                  onClick={async () => { setBusy(true); await shareReceiptPdf(selected, context); setBusy(false); }}
+                  onClick={() => runAction(() => shareReceiptPdf(selected, context))}
                   style={{
                     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
                     background: "#25D366", border: "none", borderRadius: 10, padding: "11px 0",
@@ -201,12 +217,13 @@ export default function ReceiptsView({ role, me }) {
                 </button>
                 <button
                   disabled={busy}
-                  onClick={async () => { setBusy(true); await downloadReceiptPdf(selected, context); setBusy(false); }}
+                  onClick={() => runAction(() => downloadReceiptPdf(selected, context))}
                   style={{ width: 44, display: "flex", alignItems: "center", justifyContent: "center", background: T.ink, border: "none", borderRadius: 10, cursor: "pointer" }}
                 >
                   <Download size={16} color={T.gold} />
                 </button>
               </div>
+              {shareError && <p style={{ color: T.rust, fontSize: 11.5, marginTop: 8, textAlign: "center" }}>{shareError}</p>}
               <p style={{ fontSize: 11, color: T.textSoft, marginTop: 8, textAlign: "center" }}>
                 Sur mobile, "Partager" ouvre directement WhatsApp avec le PDF prêt à envoyer.
               </p>
