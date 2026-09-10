@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Plus, FileText, Save, Wallet, HandCoins } from "lucide-react";
 import { T } from "../theme.jsx";
-import { Screen, Pill } from "./UI.jsx";
+import { Screen, Pill, ReceivedList } from "./UI.jsx";
 import { fetchMembers, fetchTontineSettings, updateTontineSettings, fetchReceipts, fetchPaymentsForTurn, recordPayment, fetchCommissionsSummary } from "../data/api.js";
 import { paymentStatus } from "../lib/rotation.js";
 
@@ -204,6 +204,11 @@ export default function PaymentsView() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Membres ayant déjà reçu leur tour ce cycle-ci */}
+      <div style={{ marginBottom: 8 }}>
+        <ReceivedList members={members} currentTurn={currentTurn} cycleNumber={tontine.cycleNumber} currency={tontine.currency} amount={tontine.amount} />
       </div>
 
       {/* Commissions du trésorier, cumulées par membre */}

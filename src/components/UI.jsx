@@ -112,6 +112,37 @@ export function StatCard({ label, value, sub, icon: Icon }) {
   );
 }
 
+export function ReceivedList({ members, currentTurn, cycleNumber, currency, amount }) {
+  const received = members.filter((m) => m.turn < currentTurn).sort((a, b) => a.turn - b.turn);
+  return (
+    <div style={{ background: T.card, border: `1px solid ${T.line}`, borderRadius: 14, padding: "6px 14px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0" }}>
+        <h3 className="f-body" style={{ fontSize: 13, fontWeight: 700, margin: 0 }}>
+          Déjà reçu leur tour — Cycle {cycleNumber ?? 1}
+        </h3>
+        <span className="f-mono" style={{ fontSize: 12, color: T.textSoft }}>{received.length} / {members.length}</span>
+      </div>
+      {received.length === 0 ? (
+        <p style={{ color: T.textSoft, fontSize: 13, padding: "6px 0 10px" }}>Personne n'a encore reçu son tour dans ce cycle.</p>
+      ) : (
+        <div className="scroll-list" style={{ maxHeight: 130 }}>
+          {received.map((m) => (
+            <div key={m.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${T.line}` }}>
+              <span style={{ fontSize: 13 }}>Tour {m.turn} — {m.name}</span>
+              {amount != null && (
+                <span className="f-mono" style={{ fontSize: 12, color: T.textSoft }}>{(amount * members.length).toLocaleString("fr-FR")} {currency}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      <p style={{ fontSize: 10.5, color: T.textSoft, margin: "8px 0 6px" }}>
+        Cette liste se réinitialise automatiquement au début de chaque nouveau cycle.
+      </p>
+    </div>
+  );
+}
+
 export function Screen({ title, subtitle, children, action }) {
   return (
     <div>

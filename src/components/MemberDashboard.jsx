@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CheckCircle2, Clock, ShieldCheck } from "lucide-react";
 import { T } from "../theme.jsx";
-import { RotationWheel, Pill, StatCard, Screen } from "./UI.jsx";
+import { RotationWheel, Pill, StatCard, Screen, ReceivedList } from "./UI.jsx";
 import { fetchMembers, fetchTontineSettings, fetchPaymentsForTurn } from "../data/api.js";
 import { rotationStatus, paymentStatus } from "../lib/rotation.js";
 
@@ -69,6 +69,10 @@ export default function MemberDashboard({ me }) {
             ))}
           </div>
         </div>
+      </div>
+
+      <div style={{ marginTop: 20 }}>
+        <ReceivedList members={members} currentTurn={currentTurn} cycleNumber={tontine.cycleNumber} currency={tontine.currency} amount={tontine.amount} />
       </div>
     </Screen>
   );
